@@ -1,0 +1,25 @@
+{
+  "name": "transcationprocessor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "userHandler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arshithsuresh/vaccine-chain-transaction-processor.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arshithsuresh/vaccine-chain-transaction-processor/issues"
+  },
+  "homepage": "https://github.com/arshithsuresh/vaccine-chain-transaction-processor#readme",
+  "dependencies": {
+    "cbor": "^7.0.5",
+    "dotenv": "^10.0.0",
+    "request": "^2.88.2",
+    "sawtooth-sdk": "^1.0.5"
+  }
+}
