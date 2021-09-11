@@ -108,6 +108,7 @@ class UserHandler extends TransactionHandler
                             if(value['vaccineDOSE1'] == null)
                             {
                                 const data = {  
+                                    ...value,
                                     vaccineDOSE1:data.vaccinedata
                                 }
                                 entries = {                                    

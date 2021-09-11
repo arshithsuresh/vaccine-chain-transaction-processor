@@ -46,10 +46,11 @@ class VaccineHandler extends TransactionHandler
                         [address] : cbor.encode(vaccineData)
                     }
 
-                    context.setState(entries)
+                    return context.setState(entries)
                     break;
 
                 case "transfer":
+
                     const vaccineAddress = data.vaccineAddress
                     const vaccineOwner = data.ownerAddress
                     const tranferAddress = data.transferAddress
@@ -62,26 +63,63 @@ class VaccineHandler extends TransactionHandler
                             let value = cbor.decodeFirstSync(stateValue);
 
                             const data = {
+                                ...value,
                                 owner: tranferAddress
                             }
+
                             if( value['owner'] == vaccineOwner)
                             {
                                 let entries ={
                                     [vaccineAddress] : cbor.encode(data)
                                 }
-                                context.setState(entries)
+                                return context.setState(entries)
                             }
                             else
                             {
-                                new InvalidTransaction("Invalid owner! You are not the owner!")
+                                throw new InvalidTransaction("Invalid owner! You are not the owner!")
                             }
                         }
                     })
                     
                     break;
                 case "monitor":
+                    const vaccineAddress = data.vaccineAddress
+                    const vaccineOwner = data.ownerAddress
+                    const vaccineMonitorData = data.monitordata
+
+                    context.getState([vaccineAddress]).then((addressValues)=>{
+                        let stateValue = addressValues[vaccineAddress]
+
+                        if(stateValue && stateValue.length)
+                        {
+                            let value = cbor.decodeFirstSync(stateValue);
+
+                            const monitorData = {
+                                ...value['monitordata'],
+                                vaccineMonitorData
+                            }
+
+                            const data = {
+                                ...value,
+                                monitordata: monitorData
+                            }
+
+                            if( value['owner'] == vaccineOwner)
+                            {
+                                let entries ={
+                                    [vaccineAddress] : cbor.encode(data)
+                                }
+                                return context.setState(entries)
+                            }
+                            else
+                            {
+                                throw new InvalidTransaction("Invalid owner! You are not the owner!")
+                            }
+                        }
+                    }); 
                     break;
                 case "vaccinate":
+                    
                     break;
             }
 
