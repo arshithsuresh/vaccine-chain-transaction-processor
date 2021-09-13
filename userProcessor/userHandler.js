@@ -98,6 +98,7 @@ class UserHandler extends TransactionHandler
                 case "vaccinate":     
 
                     address = USER_PREFIX+hash(userid).substring(0,64)
+                    const vaccineOwner = data.vaccinatorAddress
 
                     context.getState([address]).then((addressValue)=>{
                         let stateValue = addressValue[address]
@@ -105,24 +106,43 @@ class UserHandler extends TransactionHandler
                         if(stateValue && stateValue.length)
                         {
                             let value = cbor.decodeFirstSync(stateValue)
-                            if(value['vaccineDOSE1'] == null)
-                            {
-                                const data = {  
-                                    ...value,
-                                    vaccineDOSE1:data.vaccinedata
+
+                            if(value['owner'] == vaccineOwner)
+                            {                            
+                                if(value['vaccineDOSE1'] == null)
+                                {
+                                    const data = {  
+                                        ...value,
+                                        vaccineDOSE1:data.vaccinedata
+                                    }
+                                    entries = {                                    
+                                        [address] : cbor.encode(vaccineDOSE1)
+                                    };
+
+                                    return context.setState(entries)
+
                                 }
-                                entries = {                                    
-                                    [address] : cbor.encode(vaccineDOSE1)
-                                };
+                                else
+                                {
+                                    const data = {  
+                                        ...value,
+                                        vaccineDOSE2:data.vaccinedata
+                                    }
+                                    entries = {                                    
+                                        [address] : cbor.encode(vaccineDOSE1)
+                                    };
 
-                                return context.setState(entries)
-
+                                    return context.setState(entries)
+                                }
                             }
-                        }
-                    })
+                            throw new InvalidTransaction("User Handler: Invalid Owner")
+                    }           
+
+                        })             
 
                 break;
                 case "createpublic":
+                    
                     
                     userData = {
                         userid : data.userid,
@@ -136,6 +156,9 @@ class UserHandler extends TransactionHandler
                     }
 
                     let userAddress = USER_PREFIX+hash(userid).substring(0,64)
+                    _display("Creating Public User : ")
+                    _display(userAddress)
+                    _display(JSON.stringify(userData))
 
                     entries = {
                         [userAddress]:cbor.encode(userData)

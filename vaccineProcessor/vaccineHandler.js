@@ -27,7 +27,10 @@ class VaccineHandler extends TransactionHandler
 
             let action = payload.action
             let data = payload.data
-            const batchid = data.batchid            
+            const batchid = data.batchid   
+            
+            let vaccineAddress;
+            let vaccineOwner;
 
             switch(action)
             {
@@ -51,8 +54,8 @@ class VaccineHandler extends TransactionHandler
 
                 case "transfer":
 
-                    const vaccineAddress = data.vaccineAddress
-                    const vaccineOwner = data.ownerAddress
+                    vaccineAddress = data.vaccineAddress
+                    vaccineOwner = data.ownerAddress
                     const tranferAddress = data.transferAddress
 
                     context.getState([vaccineAddress]).then((addressValues)=>{
@@ -62,7 +65,7 @@ class VaccineHandler extends TransactionHandler
                         {
                             let value = cbor.decodeFirstSync(stateValue);
 
-                            const data = {
+                            const transferData = {
                                 ...value,
                                 owner: tranferAddress
                             }
@@ -70,7 +73,7 @@ class VaccineHandler extends TransactionHandler
                             if( value['owner'] == vaccineOwner)
                             {
                                 let entries ={
-                                    [vaccineAddress] : cbor.encode(data)
+                                    [vaccineAddress] : cbor.encode(transferData)
                                 }
                                 return context.setState(entries)
                             }
@@ -83,8 +86,8 @@ class VaccineHandler extends TransactionHandler
                     
                     break;
                 case "monitor":
-                    const vaccineAddress = data.vaccineAddress
-                    const vaccineOwner = data.ownerAddress
+                    vaccineAddress = data.vaccineAddress
+                    vaccineOwner = data.ownerAddress
                     const vaccineMonitorData = data.monitordata
 
                     context.getState([vaccineAddress]).then((addressValues)=>{
@@ -99,7 +102,7 @@ class VaccineHandler extends TransactionHandler
                                 vaccineMonitorData
                             }
 
-                            const data = {
+                            const upData = {
                                 ...value,
                                 monitordata: monitorData
                             }
@@ -107,7 +110,7 @@ class VaccineHandler extends TransactionHandler
                             if( value['owner'] == vaccineOwner)
                             {
                                 let entries ={
-                                    [vaccineAddress] : cbor.encode(data)
+                                    [vaccineAddress] : cbor.encode(upData)
                                 }
                                 return context.setState(entries)
                             }
